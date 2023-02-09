@@ -4,7 +4,7 @@
 <!--The head tag describes our html page-->
 
 <head>
-    <title>App Name: A Coding Challenge</title>
+    <title>NextEvent: A Coding Challenge by Anna Baschnagel</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
@@ -31,14 +31,14 @@
 
 <!--The body tag will contain all of the page content-->
 
-<body>
+<body onload="buildDropDown()">
     <header>
         <!-- ==== Nav Section ==== -->
         <nav class="navbar navbar-expand-lg" id="mainNav">
             <div class="container-fluid">
                 <a class="navbar-brand fs-1" href="/index.html"><img
                         src="/img/For Web/svg/White logo - no background.svg" height="100" />
-                    <span class="ms-5 app-name">App Name</span>
+                    <span class="ms-5 app-name">NextEvent</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -60,10 +60,10 @@
                         </li>
                         <!-- ADD THIS IN BEFORE PUBLISHING -->
                         <li class="nav-item p-3">
-                            <a class="nav-link" href="#">The Repo</a>
+                            <a class="nav-link" href="https://github.com/baschnagelac/acbSuperDogEventsFinal.git" target="_blank">The Repo</a>
                         </li>
                         <li class="nav-item p-3">
-                            <a class="nav-link" href="#">About</a>
+                            <a class="nav-link" href="https://annabaschnagelportfolio.netlify.app/" target="_blank">About</a>
                         </li>
                         <li class="nav-item p-3">
                             <a class="nav-link" href="#">Blog</a>
@@ -78,12 +78,66 @@
     <!-- ==== Main Section ==== -->
 
 
-    <main class="content container">
-        <div class="container">
+    <main class="content container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <!-- drop down and stats -->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-success">Select A City...</button>
+                    <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="visually-hidden">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu" id="eventDropDown">
+                        <!-- <li><a class="dropdown-item" href="#">Action</a></li> -->
+
+                    </ul>
+                </div>
+                <table class="table table-striped">
+                    <tr>
+                        <th colspan="2">Stats for <span id="statsHeader">All</span> Events</th>
+                    </tr>
+                    <tr>
+                        <td>Total Attendance</td>
+                        <td id="total">100</td>
+                    </tr>
+                    <tr>
+                        <td>Average Attendance</td>
+                        <td id="average">100</td>
+                    <tr>
+                        <td>Most Attended</td>
+                        <td id="most">100</td>
+                    </tr>
+                    <tr>
+                        <td>Least Attended</td>
+                        <td id="least">100</td>
+                    </tr>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6 order-first order-md-last">
+                <img src="/img/NextEvent (2).png" alt="nextevent logo" class="img-fluid rounded-5 p-3" />
+            </div>
 
         </div>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="m-3 p-3 rounded-pill btn btn-success">Add New Event</button>
+        <div class="table-resonsive">
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Event Name</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Attendance</th>
+                        <th>Event Date</th>
+                    </tr>
+                </thead>
+                <tbody id="eventTableBody">
+                    <!-- table template goes here -->
+                </tbody>
+            </table>
+        </div>
     </main>
-
 
     <!-- ==== Footer Section ==== -->
     <footer class="container-fluid mt-5">
@@ -123,11 +177,127 @@
         </div>
     </footer>
 
+    <!-- drop down menu item template -->
+    <template id="dropdownItemTemplate">
+        <li><a class="dropdown-item" onclick="getEvents(this)"></a></li>
+    </template>
+
+    <!-- table row template -->
+    <template id="eventTableRowTemplate">
+        <tr>
+            <td data-id="event"></td>
+            <td data-id="city"></td>
+            <td data-id="state"></td>
+            <td data-id="attendance"></td>
+            <td data-id="eventDate"></td>
+        </tr>
+    </template>
+
+
+    <!-- Add New Event Modal -->
+    <div class="modal" tabindex="-1" id="exampleModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add a New Event</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="#" id="newEventForm">
+                        <div class="modal-body">
+                            <label class="form-label" for="eventName">
+                                Event Name</label>
+                            <input class="form-control" type="text" id="newEventName" aria-label="eventName"
+                                name="event" required />
+                            <label class="form-label" for="cityName">
+                                City</label>
+                            <input class="form-control" type="text" id="newEventCity" aria-label="cityName" name="city"
+                                required />
+                            <label class="form-label" for="newEventState">
+                                State</label>
+                            <select class="form-control" id="newEventState" name="state">
+                                <option value="AL">Alabama</option>
+                                <option value="AK">Alaska</option>
+                                <option value="AZ">Arizona</option>
+                                <option value="AR">Arkansas</option>
+                                <option value="CA">California</option>
+                                <option value="CO">Colorado</option>
+                                <option value="CT">Connecticut</option>
+                                <option value="DE">Delaware</option>
+                                <option value="DC">District Of Columbia</option>
+                                <option value="FL">Florida</option>
+                                <option value="GA">Georgia</option>
+                                <option value="HI">Hawaii</option>
+                                <option value="ID">Idaho</option>
+                                <option value="IL">Illinois</option>
+                                <option value="IN">Indiana</option>
+                                <option value="IA">Iowa</option>
+                                <option value="KS">Kansas</option>
+                                <option value="KY">Kentucky</option>
+                                <option value="LA">Louisiana</option>
+                                <option value="ME">Maine</option>
+                                <option value="MD">Maryland</option>
+                                <option value="MA">Massachusetts</option>
+                                <option value="MI">Michigan</option>
+                                <option value="MN">Minnesota</option>
+                                <option value="MS">Mississippi</option>
+                                <option value="MO">Missouri</option>
+                                <option value="MT">Montana</option>
+                                <option value="NE">Nebraska</option>
+                                <option value="NV">Nevada</option>
+                                <option value="NH">New Hampshire</option>
+                                <option value="NJ">New Jersey</option>
+                                <option value="NM">New Mexico</option>
+                                <option value="NY">New York</option>
+                                <option value="NC">North Carolina</option>
+                                <option value="ND">North Dakota</option>
+                                <option value="OH">Ohio</option>
+                                <option value="OK">Oklahoma</option>
+                                <option value="OR">Oregon</option>
+                                <option value="PA">Pennsylvania</option>
+                                <option value="RI">Rhode Island</option>
+                                <option value="SC">South Carolina</option>
+                                <option value="SD">South Dakota</option>
+                                <option value="TN">Tennessee</option>
+                                <option value="TX">Texas</option>
+                                <option value="UT">Utah</option>
+                                <option value="VT">Vermont</option>
+                                <option value="VA">Virginia</option>
+                                <option value="WA">Washington</option>
+                                <option value="WV">West Virginia</option>
+                                <option value="WI">Wisconsin</option>
+                                <option value="WY">Wyoming</option>
+                            </select>
+                            <label class="form-label" for="attendance" ">
+                                Attendance</label>
+                            <input class=" form-control" type="number" id="newEventAttendance" name="attendance"
+                                aria-label="attendance" required />
+                            <label class="form-label" for="date">
+                                Date</label>
+                            <input class="form-control" type="date" id="newEventDate" name="date" aria-label="date"
+                                required />
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveEventData()"
+                        data-bs-dismiss="modal">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
         crossorigin="anonymous"></script>
+
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="js/site.js"></script>
 </body>
 

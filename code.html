@@ -4,7 +4,7 @@
 <!--The head tag describes our html page-->
 
 <head>
-    <title>App Name: A Coding Challenge</title>
+    <title>NextEvent: A Coding Challenge by Anna Baschnagel</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
@@ -39,7 +39,7 @@
             <div class="container-fluid">
                 <a class="navbar-brand fs-1" href="/index.html"><img
                         src="/img/For Web/svg/White logo - no background.svg" height="100" />
-                    <span class="ms-5 app-name">App Name</span>
+                    <span class="ms-5 app-name">NextEvent</span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -61,10 +61,10 @@
                         </li>
                         <!-- ADD THIS IN BEFORE PUBLISHING -->
                         <li class="nav-item p-3">
-                            <a class="nav-link" href="#">The Repo</a>
+                            <a class="nav-link" href="https://github.com/baschnagelac/acbSuperDogEventsFinal.git" target="_blank">The Repo</a>
                         </li>
                         <li class="nav-item p-3">
-                            <a class="nav-link" href="#">About</a>
+                            <a class="nav-link" href="https://annabaschnagelportfolio.netlify.app/" target="_blank">About</a>
                         </li>
                         <li class="nav-item p-3">
                             <a class="nav-link" href="#">Blog</a>
@@ -81,39 +81,315 @@
 
     <main class="content container  mt-5">
         <div class="row row-cols-1 row-cols-lg-2 p-3">
-            <h1 class=" border-bottom border-2 border-dark">The Code for APP</h1>
+            <h1 class=" border-bottom border-2 border-dark">The Code for NextEvent</h1>
             <!-- source code -->
             <div class="col-12 col-lg-8">
                 <pre class="line-numbers">
                         <code class="language-javascript ">
-                            function displayMessage() {
-                                let msg = document.getElementById('message').value;
+                            var events = [{
+                                event: "ComicCon",
+                                city: "New York",
+                                state: "New York",
+                                attendance: 240000,
+                                date: "06/01/2017",
+                            },
+                            {
+                                event: "ComicCon",
+                                city: "New York",
+                                state: "New York",
+                                attendance: 250000,
+                                date: "06/01/2018",
+                            },
+                            {
+                                event: "ComicCon",
+                                city: "New York",
+                                state: "New York",
+                                attendance: 257000,
+                                date: "06/01/2019",
+                            },
+                            {
+                                event: "ComicCon",
+                                city: "San Diego",
+                                state: "California",
+                                attendance: 130000,
+                                date: "06/01/2017",
+                            },
+                            {
+                                event: "ComicCon",
+                                city: "San Diego",
+                                state: "California",
+                                attendance: 140000,
+                                date: "06/01/2018",
+                            },
+                            {
+                                event: "ComicCon",
+                                city: "San Diego",
+                                state: "California",
+                                attendance: 150000,
+                                date: "06/01/2019",
+                            },
+                            {
+                                event: "HeroesCon",
+                                city: "Charlotte",
+                                state: "North Carolina",
+                                attendance: 40000,
+                                date: "06/01/2017",
+                            },
+                            {
+                                event: "HeroesCon",
+                                city: "Charlotte",
+                                state: "North Carolina",
+                                attendance: 45000,
+                                date: "06/01/2018",
+                            },
+                            {
+                                event: "HeroesCon",
+                                city: "Charlotte",
+                                state: "North Carolina",
+                                attendance: 50000,
+                                date: "06/01/2019",
+                            },
+                            ];
                             
-                                Swal.fire(
-                                    {
-                                        backdrop: false,
-                                        title: 'App Name',
-                                        text: msg
+                            function buildDropDown() {
+                                //get the dropdown meny from the page
+                                let dropdownMenu = document.getElementById('eventDropDown');
+                                //empty the innerHTML to ensure it is clean
+                                dropdownMenu.innerHTML = '';
+                            
+                                //get our events
+                                let currEvents = getEventData();
+                            
+                                //pull out just the city nanmes 
+                                let eventCities = currEvents.map(
+                                    function (event) {
+                                        return event.city
                                     }
-                                )
+                                );
+                                //filter the cities to only distinct city names
+                                let distinctCities = [...new Set(eventCities)];
+                            
+                                //get the template from the page
+                                const template = document.getElementById('dropdownItemTemplate');
+                            
+                                //copy the template
+                                let dropdownTemplateNode = document.importNode(template.content, true);
+                                //get the a tag from the tempalte copy
+                                let menuItem = dropdownTemplateNode.querySelector('a');
+                                //change the text
+                                menuItem.textContent = 'All Cities';
+                                menuItem.setAttribute("data-string", "All");
+                                // <a class="drop-down items" data-string="All">All Cities</a>
+                            
+                                //add items to the page 
+                                dropdownMenu.appendChild(menuItem);
+                            
+                                for (let index = 0; index < distinctCities.length; index++) {
+                                    let cityMenuItem = document.importNode(template.content, true);
+                                    let cityButton = cityMenuItem.querySelector('a');
+                            
+                                    cityButton.textContent = distinctCities[index];
+                                    cityButton.setAttribute("data-string", distinctCities[index]);
+                            
+                                    dropdownMenu.appendChild(cityMenuItem);
+                                }
+                            
+                                displayStats(currEvents);
+                                displayEventData(currEvents);
                             }
+                            
+                            function displayStats(eventsArray) {
+                                let totalAttendance = calculateTotal(eventsArray);
+                                let averageAttendance = calculateAverage(eventsArray);
+                                let mostAttended = calculateMax(eventsArray);
+                                let leastAttended = calculateMin(eventsArray);
+                            
+                                //do some math
+                            
+                                document.getElementById('total').textContent = totalAttendance.toLocaleString(
+                                    
+                                );
+                                document.getElementById('average').textContent = averageAttendance.toLocaleString(
+                                    "en-US", {
+                                    maximumFractionDigits: 0,
+                                    minimumFractionDigits: 0
+                                }
+                                );
+                                document.getElementById('most').textContent = mostAttended.toLocaleString();
+                                document.getElementById('least').textContent = leastAttended.toLocaleString();
+                            
+                            
+                            }
+                            
+                            
+                            function calculateTotal(eventsArray) {
+                                let sum = 0;
+                            
+                                for (let index = 0; index < eventsArray.length; index++) {
+                                    let currentEvent = eventsArray[index];
+                                    sum = sum + currentEvent.attendance;
+                            
+                            
+                                }
+                                return sum;
+                            }
+                            
+                            function calculateAverage(eventsArray) {
+                                let total = calculateTotal(eventsArray); // above
+                                let average = total / eventsArray.length;
+                                return average;
+                            
+                            }
+                            
+                            function calculateMax(eventsArray) {
+                                let max = eventsArray[0].attendance;
+                            
+                                for (let index = 0; index < eventsArray.length; index++) {
+                                    let currentEvent = eventsArray[index];
+                            
+                                    if (currentEvent.attendance > max) {
+                                        max = currentEvent.attendance;
+                                    }
+                            
+                                }
+                                return max;
+                            
+                            }
+                            
+                            function calculateMin(eventsArray) {
+                                let min = eventsArray[0].attendance;
+                            
+                                for (let index = 0; index < eventsArray.length; index++) {
+                                    let currentEvent = eventsArray[index];
+                                    if (currentEvent.attendance < min) {
+                                        min = currentEvent.attendance;
+                                    }
+                                }
+                                return min;
+                            
+                            }
+                            
+                            function displayEventData(eventsArray) {
+                                let tableBody = document.getElementById('eventTableBody');
+                                const tableRowTemplate = document.getElementById('eventTableRowTemplate');
+                            
+                                tableBody.innerHTML = ''; // clear table body 
+                            
+                                for (let i = 0; i < eventsArray.length; i++) {
+                                    let eventRow = document.importNode(tableRowTemplate.content, true);
+                                    let currentEvent = eventsArray[i];
+                            
+                            
+                                    let tableCells = eventRow.querySelectorAll('td');
+                            
+                                    tableCells[0].textContent = currentEvent.event;
+                                    tableCells[1].textContent = currentEvent.city;
+                                    tableCells[2].textContent = currentEvent.state;
+                                    tableCells[3].textContent = currentEvent.attendance.toLocaleString( "en-US", {
+                                        maximumFractionDigits: 0,
+                                        minimumFractionDigits: 0
+                                    });
+                                    tableCells[4].textContent = currentEvent.date;
+                            
+                                    tableBody.appendChild(eventRow);
+                            
+                            
+                            
+                                }
+                            
+                            
+                            
+                            }
+                            
+                            function getEventData() { // went into dropdown function
+                                let currentEvents = JSON.parse(localStorage.getItem('superDogEventData')); // do i have anything in storage
+                            
+                                if (currentEvents == null) { //if i don't, use the events array and store it so next time i have something in stoage
+                                    currentEvents = events;
+                                    localStorage.setItem('superDogEventData', JSON.stringify(currentEvents)); //JSON - put into string then parse back into object
+                                }
+                            
+                                return currentEvents;
+                            }
+                            
+                            function getEvents(element) {
+                                let currentEvents = getEventData(); //get all events we have full array of every event
+                                let cityName = element.getAttribute('data-string'); 
+                                //from a tag element in template give me your data-string attribute which we set to be hte name 
+                                //of city they clcked on reducing to city data
+                            
+                                let filteredEvents = currentEvents;
+                            
+                                if (cityName != 'All') {
+                                     filteredEvents = currentEvents.filter(
+                                        function (event) {
+                                            if (cityName == event.city) {
+                                                return event;
+                                            }
+                                        }
+                                    );
+                                }
+                            
+                            
+                                document.getElementById('statsHeader').textContent = cityName;
+                                displayStats(filteredEvents);
+                                displayEventData(filteredEvents);
+                            }
+                            
+                            function saveEventData() {
+                                //get info from form inputs
+                                let eventName = document.getElementById('newEventName').value;
+                                let cityName = document.getElementById('newEventCity').value;
+                                let eventAttendance = parseInt(document.getElementById('newEventAttendance').value);
+                                let eventDate = document.getElementById('newEventDate').value;
+                            
+                                eventDate = `${eventDate} 00:00`;
+                                eventDate = new Date(eventDate).toLocaleDateString();
+                            
+                                let stateSelect = document.getElementById('newEventState');
+                                let state = stateSelect.options[stateSelect.selectedIndex].text;
+                            
+                                let newEvent = {
+                                        event: eventName,
+                                        city: cityName,
+                                        state: state,
+                                        attendance: eventAttendance,
+                                        date: eventDate,
+                                };
+                            
+                                let currentEvents = getEventData();
+                                currentEvents.push(newEvent);
+                            
+                                localStorage.setItem("superDogEventData", JSON.stringify(currentEvents));
+                                //update the page
+                            
+                                buildDropDown();
+                                document.getElementById('statsHeader').textContent = 'All';
+                                document.getElementById('newEventForm').reset();
+                            }
+                            
                             
                         </code>
                     </pre>
             </div>
             <!-- code description -->
             <div class="col-12 col-lg-4">
-                <h5>The code is structured in three functions</h5>
-                <p>The first function <code>function getValues()</code> gets the user's input from the page and acts as
-                    a controller function or entry point. It then gets the starting and ending values from the page.
-                    Next, it parses the inputs as numbers and verifies that they ARE numbers. If they ARE numbers, the
-                    numbers are generated and displayed on the page. If they are not, we tell the user with an Sweet
-                    Alert.</p>
-                <p>The second function <code>function generateNumbers(start, end)</code>generates our numbers and
-                    contains the logic parts of the function by running a for loop. </p>
-                <p>The third function <code>function displayNumbers(numberArray)</code> acts as the view function and
-                    displays the numbers on the page. Within this function, we use a for loop and if statements to
-                    control the display of the results.</p>
+                <h5 class="fs-2">The code is structured in three functions</h5>
+                <p>Please Note: Some of the characters may not display correctly, please see the Repo (linked in navigation menu) for the full details</p>
+                <code>var events = [{}]</code>
+                <p>Before the functions start, there is an array of objects. Each object has five properties (event, city, state, attendence, and date) for a variety of events.</p> 
+                    <code>function buildDropDown()</code>
+                    <p>is a function that runs when the page loads. First, the function gets the dropdown menu from the page via getElementById with the ID of eventDropDown. Next, it empties the dropdownMenu's innerHTML to an empty string to ensure it is clean for the user. Then, it calls to get our events with the getEventData function. Also, it uses .map to pull out JUST the city names of the event data. Since there are multiple events in each city, it then filters the cities to only DISTINCT city names using the Set function. In the HTML document, there is a template for the dropdown items. The function then gets this template from the page using the ID 'dropdownItemTemplate'. After it gets the template from the page, it must copy the template using document.importNode. After the template has been brought in and copied, the function gets the anchor tag from the template copy using the querySelector. Next, the function changes the text equal to 'All Cities'. And lastly, the function adds items to the page via appendChild. A for-loop is used to increment through the distinct cities in the dropdown menu. Finally, the displayStats and displayEventData functions are called.</p> 
+                    <code>function getEventData()</code>
+                    <p>function was called in the buildDropDown Function. First, this function checks if there is anything in storage. An if statement is then used -- if there is no data in storage, use the events Array mentioned previously and store it so next time there is something in storage. JSON puts the data into a string then parses it back in the object.</p> 
+                    <code>function displayStats() & function(s) calculateX()</code>
+                    <p>Within this program, there are 4 functions working to calculate the total, average, minimum, and maximums of the attendance data. -- To calculate the total attendenace in each city a for-loop is implemented to add the various attendences up for each respective city. To calculate the average, the calculateTotal is used with simple mathematical operations used to find averages. To calculate the maximum number of attendants, a for-loop is used again to iterate through all the cities and if the number of attendees is greater than the max, then the max is then that number. Similarly, to calculate the minumum attendance, a for-loop is used again except if the number is less than the minimum, then that number is the minimum attended event. The displayStats function calls upon these functions to do the math involved in this program.</p> 
+                    <code>function displayEventData()</code> 
+                    <p>is the function that handles displaying the table of events. Just like the dropdown menu used a template from the HTML document, so does this table. The table is cleared, a for-loop is used to iterate through the various events to display them in tableCells. appendChild is used to create the rows.</p>
+                    <code>function getEvents()</code>
+                    <p>This function gets all the events from the array of objects. Then, the function uses getAttribute to target the anchor tag element in the drop down menu template which is set to be the name of the city they clicked on so that it shows that city's data. These are filtered events which an if-statement is used to communicate how the app should respond. If the city name is for a specific city (not equal to All Cities) then the events need filtered via drop down menu. If the cityName is equal to an event city, then return THAT city's attendance data. The function finishes by calling for the proper city name to display in the text of the dropdown menu, as well as calling for the display of filtered events.</p> 
+                    <code>function saveEventData</code>
+                    <p>The last function in this program is to save event data from any creations of new events from the user. it gets the new event's name, city, attendance stats, and event date from the user's form inputs. Next, the program alters the display of the event dates and times so that it is user-friendly on the eyes. Also, the states drop-down is included on the form. Then a variable is made to describe newEvent for any new event a user may add. It is an object with the properties correlating the relevant values so that the program can use and display that data. JSON.stringify is used to update the page. Lastly, the buildDropDown function is called so that any new event data also drops down and displays in the stats box. </p>
 
             </div>
         </div>
